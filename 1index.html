@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="shortcut icon" href="#">
+    <title>Live!</title>
+    <link rel="stylesheet" href="1style.css">
+</head>
+
+<body>
+    <div class="video-container">
+        <div>
+            <h3>Local</h3>
+            <video id="localVideo" autoplay muted playsinline></video> 
+            <div class="change-id-container">
+                <div id="myId"></div>
+                <input type="text" id="newId" placeholder="Enter new ID">
+                <button id="changeIdBtn" class="myButton">Change my ID</button>
+            </div>
+            <!-- <div>
+                <button id="toggleVideo">开关视频</button>
+                <button id="toggleAudio">开关音频</button>
+            </div>
+            <div>
+                <select id="videoSourceSelect">
+                    <option value="">选择视频输入设备</option>
+                </select>
+                <select id="audioSourceSelect">
+                    <option value="">选择音频输入设备</option>
+                </select>
+            </div> -->
+        </div>
+
+        <div id="remoteVideosContainer">
+            <h3>Remote</h3>
+            <div id="remoteVideos"></div>
+        </div>
+    </div>
+
+    <script src="1stream.js"></script>
+</body>
+
+</html>

@@ -1,9 +1,6 @@
 {
   "dependencies": {
-    "peerjs": "^1.5.4"
-  },
-  "scripts": {
-    "start": "node index.js"
-  },
-  "type": "module"
+    "peerjs": "^1.5.4",
+    "ws": "^8.18.0"
+  }
 }
