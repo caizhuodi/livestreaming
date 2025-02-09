@@ -27,9 +27,59 @@ async function getLocalStream() {
     }
 }
 
+// 获取视频设备列表
+async function listVideoDevices() {
+    const videoSourceSelect = document.getElementById('videoSourceSelect');
+
+    // Clear the existing options (to avoid duplicates)
+    videoSourceSelect.innerHTML = '<option value="">选择视频输入设备</option>';
+
+    try {
+        // Get the list of media devices
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+        videoDevices.forEach(device => {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.textContent = device.label || `Camera ${videoSourceSelect.length}`;
+            videoSourceSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error enumerating devices:', error);
+    }
+}
+
+// 获取音频设备列表
+async function listAudioDevices() {
+    const audioSourceSelect = document.getElementById('audioSourceSelect');
+
+    // Clear the existing options (to avoid duplicates)
+    audioSourceSelect.innerHTML = '<option value="">选择音频输入设备</option>';
+
+    try {
+        // Get the list of media devices
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const audioDevices = devices.filter(device => device.kind === 'audioinput');
+
+        audioDevices.forEach(device => {
+            const option = document.createElement('option');
+            option.value = device.deviceId;
+            option.textContent = device.label || `Microphone ${audioSourceSelect.length}`;
+            audioSourceSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error enumerating devices:', error);
+    }
+}
+
 // DOM加载完成后再运行其他部分
 document.addEventListener('DOMContentLoaded', async () => {  // 改为 async 函数
-    // 首先等待获取本地媒体流
+    // 等待获取视频输入设备
+    await listVideoDevices();
+    // 等待获取音频输入设备
+    await listAudioDevices();
+    // 等待获取本地媒体流
     await getLocalStream();
 
     const ws = new WebSocket('ws://localhost:8080');
@@ -186,6 +236,50 @@ document.addEventListener('DOMContentLoaded', async () => {  // 改为 async 函
             // 移除视频元素
             removeRemoteVideo(data.id);
         }
+
+        // toggleVideo之后的显示控制
+        if (data.type === 'toggleVideo') {
+            const remoteVideo = document.getElementById(`remote-video-${data.id}`);
+
+            if (remoteVideo) {
+                const stream = remoteVideo.srcObject;
+                if (stream) {
+                    // 获取视频轨道
+                    const videoTracks = stream.getVideoTracks();
+                    if (videoTracks.length > 0) {
+                        videoTracks[0].enabled = data.videoEnabled;  // 直接控制视频轨道的启用/禁用
+                    }
+                }
+
+                // 额外的 UI 处理
+                if (!data.videoEnabled) {
+                    remoteVideo.style.backgroundColor = 'black';  // 纯黑背景
+                    remoteVideo.style.opacity = '1';  // 隐藏视频
+                } else {
+                    remoteVideo.style.backgroundColor = '';  // 重置背景
+                    remoteVideo.style.opacity = '1';  // 显示视频
+                }
+            }
+        }
+
+        // toggleAudio之后的控制
+        if (data.type === 'toggleAudio') {
+            // 获取远程视频元素
+            const remoteVideo = getRemoteVideoElement(data.id); // 根据客户端ID获取对应的远程视频元素
+
+            if (remoteVideo) {
+                const stream = remoteVideo.srcObject;
+                if (stream) {
+                    const audioTracks = stream.getAudioTracks();
+                    if (audioTracks.length > 0) {
+                        audioTracks[0].enabled = data.audioEnabled; // 控制音频轨道
+                    }
+                }
+            } else {
+                console.error('Remote video element not found for ID:', data.id);
+            }
+        }
+
     };
 
     // 创建 WebRTC 连接
@@ -260,6 +354,96 @@ document.addEventListener('DOMContentLoaded', async () => {  // 改为 async 函
             alert('Please enter a different ID');
         }
     });
+
+    // 控制视频输入设备
+    document.getElementById('videoSourceSelect').addEventListener('change', async (event) => {
+        const deviceId = event.target.value;
+        if (deviceId) {
+            // Stop the current stream (if any)
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+
+            // Get the new video stream from the selected device
+            try {
+                const constraints = {
+                    video: { deviceId: { exact: deviceId } },
+                    audio: true
+                };
+
+                localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                document.getElementById('localVideo').srcObject = localStream;
+                console.log('Local video source changed successfully');
+            } catch (error) {
+                console.error('Error accessing selected video source:', error);
+            }
+        }
+    });
+
+    // 控制音频输入设备
+    document.getElementById('audioSourceSelect').addEventListener('change', async (event) => {
+        const deviceId = event.target.value;
+        if (deviceId) {
+            // Stop the current audio stream (if any)
+            if (localStream) {
+                localStream.getTracks().forEach(track => track.stop());
+            }
+
+            // Get the new audio stream from the selected device
+            try {
+                const constraints = {
+                    video: true, // Keep the video enabled
+                    audio: { deviceId: { exact: deviceId } }
+                };
+
+                localStream = await navigator.mediaDevices.getUserMedia(constraints);
+                document.getElementById('localVideo').srcObject = localStream; // You can update this to audio controls if needed
+                console.log('Local audio source changed successfully');
+            } catch (error) {
+                console.error('Error accessing selected audio source:', error);
+            }
+        }
+    });
+
+
+    // 控制视频开关
+    document.getElementById('toggleVideo').addEventListener('click', async () => {
+        const videoEnabled = localStream.getTracks().some(track => track.kind === 'video' && track.enabled);
+
+        // Toggle the video track (enable/disable)
+        localStream.getTracks().forEach(track => {
+            if (track.kind === 'video') {
+                track.enabled = !videoEnabled; // Toggle the video track
+            }
+        });
+
+        // Send the toggle video state to the server
+        ws.send(JSON.stringify({
+            type: 'toggleVideo',
+            id: currentId,
+            videoEnabled: !videoEnabled // Send the new video state (enabled or disabled)
+        }));
+    });
+
+    // 控制音频开关
+    document.getElementById('toggleAudio').addEventListener('click', () => {
+        const audioEnabled = localStream.getTracks().some(track => track.kind === 'audio' && track.enabled);
+
+        // Toggle the audio track (enable/disable)
+        localStream.getTracks().forEach(track => {
+            if (track.kind === 'audio') {
+                track.enabled = !audioEnabled; // Toggle the audio track
+            }
+        });
+
+        // Send the toggle audio state to the server
+        ws.send(JSON.stringify({
+            type: 'toggleAudio',
+            id: currentId,
+            audioEnabled: !audioEnabled // Send the new audio state (enabled or disabled)
+        }));
+    });
+
 
     // Initialize by getting the local stream
     getLocalStream();

@@ -70,6 +70,36 @@ wss.on('connection', (ws) => {
                 }
             }
 
+            // Handle the toggleVideo message
+            if (data.type === 'toggleVideo') {
+                // Forward the toggleVideo message to all clients except the sender
+                for (const clientId in clients) {
+                    if (clientId !== data.id) {
+                        clients[clientId].send(JSON.stringify({
+                            type: 'toggleVideo',
+                            id: data.id,
+                            videoEnabled: data.videoEnabled // Pass the new video state (enabled or disabled)
+                        }));
+                    }
+                }
+                return;
+            }
+
+            // Handle the toggleAudio message
+            if (data.type === 'toggleAudio') {
+                // Forward the toggleAudio message to all clients except the sender
+                for (const clientId in clients) {
+                    if (clientId !== data.id) {
+                        clients[clientId].send(JSON.stringify({
+                            type: 'toggleAudio',
+                            id: data.id,
+                            audioEnabled: data.audioEnabled // Pass the new audio state (enabled or disabled)
+                        }));
+                    }
+                }
+                return;
+            }
+
         } catch (err) {
             console.error('Error processing message:', err);
         }
@@ -85,7 +115,7 @@ wss.on('connection', (ws) => {
                 break;
             }
         }
-    
+
         if (disconnectedId) {
             console.log(`Client disconnected: ${disconnectedId}`);
             // 向其他客户端广播这个客户端已断开连接
