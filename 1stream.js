@@ -31,8 +31,6 @@ async function getLocalStream() {
 document.addEventListener('DOMContentLoaded', async () => {  // 改为 async 函数
     // 首先等待获取本地媒体流
     await getLocalStream();
-    document.getElementById('toggleVideo').addEventListener('click', toggleVideo);
-    document.getElementById('toggleAudio').addEventListener('click', toggleAudio);
 
     const ws = new WebSocket('ws://localhost:8080');
     let peerConnections = {}; // 存储 WebRTC 连接
