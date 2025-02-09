@@ -1,1 +1,3 @@
 # livestreaming
+
+npm install peerjs

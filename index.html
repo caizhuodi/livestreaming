@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Livestream</title>
+    <style>
+        .video-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px;
+        }
+        video {
+            width: 400px;
+            background: #000;
+        }
+        .controls {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="video-container">
+        <div>
+            <h3>本地视频</h3>
+            <video id="localVideo" autoplay muted playsinline></video>
+        </div>
+        <div>
+            <h3>远程视频</h3>
+            <video id="remoteVideo" autoplay playsinline></video>
+        </div>
+    </div>
+    
+    <div class="controls">
+        <input type="text" id="remoteId" placeholder="输入远程Peer ID">
+        <button id="connectBtn">连接</button>
+        <p>你的ID: <span id="localId"></span></p>
+    </div>
+
+    <script src="https://unpkg.com/peerjs@1.5.1/dist/peerjs.min.js"></script>
+    <script src="stream.js"></script>
+</body>
+</html>
