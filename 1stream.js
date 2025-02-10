@@ -32,7 +32,7 @@ async function listVideoDevices() {
     const videoSourceSelect = document.getElementById('videoSourceSelect');
 
     // Clear the existing options (to avoid duplicates)
-    videoSourceSelect.innerHTML = '<option value="">选择视频输入设备</option>';
+    videoSourceSelect.innerHTML = '<option value="">Select video input device</option>';
 
     try {
         // Get the list of media devices
@@ -55,7 +55,7 @@ async function listAudioDevices() {
     const audioSourceSelect = document.getElementById('audioSourceSelect');
 
     // Clear the existing options (to avoid duplicates)
-    audioSourceSelect.innerHTML = '<option value="">选择音频输入设备</option>';
+    audioSourceSelect.innerHTML = '<option value="">Select audio input device</option>';
 
     try {
         // Get the list of media devices
@@ -93,12 +93,13 @@ document.addEventListener('DOMContentLoaded', async () => {  // 改为 async 函
         if (!videoElement) {
             const remoteVideos = document.getElementById('remoteVideos');
             const videoContainer = document.createElement('div');
-            videoContainer.className = 'remote-video-container';
+            videoContainer.className = 'col-sm-6 col-md-4 col-lg-3 video-container';
 
             videoElement = document.createElement('video');
             videoElement.id = `remote-video-${clientId}`;
             videoElement.autoplay = true;
             videoElement.playsinline = true;
+            videoElement.className = "video-container"; 
 
             const label = document.createElement('div');
             label.className = 'remote-video-label';

@@ -1,31 +1,4 @@
-/* .video-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    margin: 20px;
-}
-
-#localVideo {
-    width: 400px;
-    background: #000;
-} */
-
-/* #remoteVideos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.remote-video-container {
-    position: relative;
-    width: 400px;
-}
-
-.remote-video-container video {
-    width: 100%;
-    background: #000;
-}
-
+/* 
 .remote-video-label {
     left: 0px;
     background: rgba(255, 255, 255, 0);
@@ -33,6 +6,8 @@
     border-radius: 4px;
 } */
 
-.myButton {
-    margin: 0px;
+.video-container video {
+    width: 100%;
+    height: 200px; /* 统一高度 */
+    object-fit: cover; /* 避免拉伸 */
 }
