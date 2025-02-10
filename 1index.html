@@ -10,36 +10,38 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container mt-4 pt-4">
         <div class="row">
+            <h3>Local</h3>
             <div class="col-sm-6 col-md-4 col-lg-3 video-container">
-                <h3>Local</h3>
                 <video id="localVideo" autoplay muted playsinline></video>
-                <div class="change-id-container">
-                    <div id="myId"></div>
-                    <input type="text" id="newId" placeholder="Enter new ID">
+                <div id="myId"></div>
+            </div>
+            <div class="col-sm-6 col-md-8 col-lg-9">
+                <div class="change-id-container mb-4" style="display: flex; gap: 10px; align-items: center;">
+                    <input type="text" id="newId" placeholder="Enter new ID" style="flex: 1; ">
                     <button id="changeIdBtn">Change my ID</button>
                 </div>
-                <div>
-                    <button id="toggleVideo">Toggle video</button>
-                    <select id="videoSourceSelect">
+                <div class="mb-2" style="display: flex; gap: 10px; align-items: center;">
+                    <button id="toggleVideo" >Toggle video</button>
+                    <select id="videoSourceSelect" style="flex: 1;">
                         <option value="">Select video input device</option>
                     </select>
                 </div>
-                <div>
-                    <button id="toggleAudio">Toggle audio</button>
-                    <select id="audioSourceSelect">
+                <div class="mb-2" style="display: flex; gap: 10px; align-items: center;">
+                    <button id="toggleAudio" >Toggle audio</button>
+                    <select id="audioSourceSelect" style="flex: 1;">
                         <option value="">Select audio input device</option>
                     </select>
                 </div>
             </div>
         </div>
-
-        <div id="remoteVideosContainer">
+        <div class="row">
             <h3>Remote</h3>
-            <div id="remoteVideos"></div>
+            <div id="remoteVideosContainer">
+                <div id="remoteVideos" class="row flex-wrap">
+            </div>
         </div>
-
     </div>
 
     <script src="1stream.js"></script>
