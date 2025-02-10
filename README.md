@@ -7,9 +7,12 @@ Please use files including "1index.html", "1server.js", "1stream.js", and "1styl
 1. run ```npm install ws``` in terminal
 2. run ```node 1server.js``` in terminal
 3. open "1index.html"
-![alt text](./asset/image/screenshot.jpg)
+   1. version 1 (❌ media control)
+    ![v1](./asset/image/screenshot_v1.jpg)
+   2. version 2 (✅ media control; responsive)
+    ![v2](./asset/image/screenshot_v2.jpg)
 
 ## future work
-1. media source adjustments
-2. UI
-3. deploy
+- [x] media source adjustments
+- [x] UI
+- [ ] deploy
